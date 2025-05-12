@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   output: "export",
 
   reactStrictMode: true,
@@ -9,7 +10,6 @@ const nextConfig = {
   publicRuntimeConfig: {
     root: process.env.BASE_PATH || "",
   },
-  optimizeFonts: false,
 };
 
-module.exports = nextConfig;
+export default nextConfig;
