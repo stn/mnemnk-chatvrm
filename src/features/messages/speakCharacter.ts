@@ -17,15 +17,16 @@ const createSpeakCharacter = () => {
     onComplete?: () => void
   ) => {
     const fetchPromise = prevFetchPromise.then(async () => {
-      const now = Date.now();
-      if (now - lastTime < 1000) {
-        await wait(1000 - (now - lastTime));
-      }
+      // const now = Date.now();
+      // if (now - lastTime < 1000) {
+      //   await wait(1000 - (now - lastTime));
+      // }
 
-      const buffer = await fetchAudio(screenplay.talk, koeiroApiKey).catch(
-        () => null
-      );
-      lastTime = Date.now();
+      // const buffer = await fetchAudio(screenplay.talk, koeiroApiKey).catch(
+      //   () => null
+      // );
+      // lastTime = Date.now();
+      const buffer = null;
       return buffer;
     });
 

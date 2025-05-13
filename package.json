@@ -14,7 +14,6 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "next": "15.3.2",
     "node-fetch": "^3.3.1",
-    "openai": "^3.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

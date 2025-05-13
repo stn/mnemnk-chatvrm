@@ -38,7 +38,7 @@ export const Menu = ({
   onChangeKoeiromapKey,
 }: Props) => {
   const [showSettings, setShowSettings] = useState(false);
-  const [showChatLog, setShowChatLog] = useState(false);
+  const [showChatLog, setShowChatLog] = useState(true);
   const { viewer } = useContext(ViewerContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
