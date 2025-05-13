@@ -1,5 +1,5 @@
 {
-  "name": "chat-vrm",
+  "name": "mnemnk-chatvrm",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next build && next start",
     "export": "next export",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@charcoal-ui/icons": "^4.5.0",
+    "@tauri-apps/api": "^2.5.0",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

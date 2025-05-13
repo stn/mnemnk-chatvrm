@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useContext, useEffect, useState } from "react";
 import VrmViewer from "@/components/vrmViewer";
 import { ViewerContext } from "@/features/vrmViewer/viewerContext";
@@ -94,91 +95,97 @@ export default function Home() {
       ];
       setChatLog(messageLog);
 
-      // Chat GPTへ
-      const messages: Message[] = [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        ...messageLog,
-      ];
-
-      const stream = await getChatResponseStream(messages, openAiKey).catch(
-        (e) => {
-          console.error(e);
-          return null;
-        }
-      );
-      if (stream == null) {
-        setChatProcessing(false);
-        return;
-      }
-
-      const reader = stream.getReader();
-      let receivedMessage = "";
-      let aiTextLog = "";
-      let tag = "";
-      const sentences = new Array<string>();
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          receivedMessage += value;
-
-          // 返答内容のタグ部分の検出
-          const tagMatch = receivedMessage.match(/^\[(.*?)\]/);
-          if (tagMatch && tagMatch[0]) {
-            tag = tagMatch[0];
-            receivedMessage = receivedMessage.slice(tag.length);
-          }
-
-          // 返答を一文単位で切り出して処理する
-          const sentenceMatch = receivedMessage.match(
-            /^(.+[。．！？\n]|.{10,}[、,])/
-          );
-          if (sentenceMatch && sentenceMatch[0]) {
-            const sentence = sentenceMatch[0];
-            sentences.push(sentence);
-            receivedMessage = receivedMessage
-              .slice(sentence.length)
-              .trimStart();
-
-            // 発話不要/不可能な文字列だった場合はスキップ
-            if (
-              !sentence.replace(
-                /^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
-                ""
-              )
-            ) {
-              continue;
-            }
-
-            const aiText = `${tag} ${sentence}`;
-            const aiTalks = textsToScreenplay([aiText], koeiroParam);
-            aiTextLog += aiText;
-
-            // 文ごとに音声を生成 & 再生、返答を表示
-            const currentAssistantMessage = sentences.join(" ");
-            handleSpeakAi(aiTalks[0], () => {
-              setAssistantMessage(currentAssistantMessage);
-            });
-          }
-        }
+        await invoke("send_message", { message: newMessage });
       } catch (e) {
-        setChatProcessing(false);
-        console.error(e);
-      } finally {
-        reader.releaseLock();
+        console.error("Error sending message:", e);
       }
 
-      // アシスタントの返答をログに追加
-      const messageLogAssistant: Message[] = [
-        ...messageLog,
-        { role: "assistant", content: aiTextLog },
-      ];
+      // // Chat GPTへ
+      // const messages: Message[] = [
+      //   {
+      //     role: "system",
+      //     content: systemPrompt,
+      //   },
+      //   ...messageLog,
+      // ];
 
-      setChatLog(messageLogAssistant);
+      // const stream = await getChatResponseStream(messages, openAiKey).catch(
+      //   (e) => {
+      //     console.error(e);
+      //     return null;
+      //   }
+      // );
+      // if (stream == null) {
+      //   setChatProcessing(false);
+      //   return;
+      // }
+
+      // const reader = stream.getReader();
+      // let receivedMessage = "";
+      // let aiTextLog = "";
+      // let tag = "";
+      // const sentences = new Array<string>();
+      // try {
+      //   while (true) {
+      //     const { done, value } = await reader.read();
+      //     if (done) break;
+
+      //     receivedMessage += value;
+
+      //     // 返答内容のタグ部分の検出
+      //     const tagMatch = receivedMessage.match(/^\[(.*?)\]/);
+      //     if (tagMatch && tagMatch[0]) {
+      //       tag = tagMatch[0];
+      //       receivedMessage = receivedMessage.slice(tag.length);
+      //     }
+
+      //     // 返答を一文単位で切り出して処理する
+      //     const sentenceMatch = receivedMessage.match(
+      //       /^(.+[。．！？\n]|.{10,}[、,])/
+      //     );
+      //     if (sentenceMatch && sentenceMatch[0]) {
+      //       const sentence = sentenceMatch[0];
+      //       sentences.push(sentence);
+      //       receivedMessage = receivedMessage
+      //         .slice(sentence.length)
+      //         .trimStart();
+
+      //       // 発話不要/不可能な文字列だった場合はスキップ
+      //       if (
+      //         !sentence.replace(
+      //           /^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
+      //           ""
+      //         )
+      //       ) {
+      //         continue;
+      //       }
+
+      //       const aiText = `${tag} ${sentence}`;
+      //       const aiTalks = textsToScreenplay([aiText], koeiroParam);
+      //       aiTextLog += aiText;
+
+      //       // 文ごとに音声を生成 & 再生、返答を表示
+      //       const currentAssistantMessage = sentences.join(" ");
+      //       handleSpeakAi(aiTalks[0], () => {
+      //         setAssistantMessage(currentAssistantMessage);
+      //       });
+      //     }
+      //   }
+      // } catch (e) {
+      //   setChatProcessing(false);
+      //   console.error(e);
+      // } finally {
+      //   reader.releaseLock();
+      // }
+
+      // // アシスタントの返答をログに追加
+      // const messageLogAssistant: Message[] = [
+      //   ...messageLog,
+      //   { role: "assistant", content: aiTextLog },
+      // ];
+
+      // setChatLog(messageLogAssistant);
       setChatProcessing(false);
     },
     [systemPrompt, chatLog, handleSpeakAi, openAiKey, koeiroParam]
