@@ -11,6 +11,9 @@ pub fn run() {
             .build(),
         )?;
       }
+
+      rest::spawn_server(app.handle().clone());
+
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![rest::send_message])

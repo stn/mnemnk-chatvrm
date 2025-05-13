@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
+import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { useCallback, useContext, useEffect, useState } from "react";
 import VrmViewer from "@/components/vrmViewer";
 import { ViewerContext } from "@/features/vrmViewer/viewerContext";
@@ -16,6 +17,10 @@ import { Introduction } from "@/components/introduction";
 import { Menu } from "@/components/menu";
 import { GitHubLink } from "@/components/githubLink";
 import { Meta } from "@/components/meta";
+
+interface EmitMessage {
+  text: string;
+}
 
 export default function Home() {
   const { viewer } = useContext(ViewerContext);
@@ -47,6 +52,23 @@ export default function Home() {
       )
     );
   }, [systemPrompt, koeiroParam, chatLog]);
+
+  let didInit = false;
+
+  useEffect(() => {
+    if (!didInit) {
+      didInit = true;
+      let unlisten: UnlistenFn;
+      listen<EmitMessage>('message-received', (event) => {
+        console.log('Received message:', event.payload);
+        setChatLog(prev => [...prev, { role: "assistant", content: event.payload.text }]);
+      }).then(fn => { unlisten = fn; });
+
+      return () => {
+        unlisten?.();
+      };
+    }
+  }, []);
 
   const handleChangeChatLog = useCallback(
     (targetIndex: number, text: string) => {

@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use tauri::{AppHandle, Emitter, Manager};
+use warp::{http::StatusCode, Filter};
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -45,4 +47,29 @@ pub async fn send_message(message: String) -> Result<(), String> {
             Err(format!("connection error: {:?}", err))
           }
       }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Message {
+  text: String,
+}
+
+pub fn spawn_server(app_handle: AppHandle) {
+  tauri::async_runtime::spawn(async move {
+    let route = warp::path("message")
+      .and(warp::post())
+      .and(warp::body::json())
+      .map(move |msg: Message| {
+        dbg!(&msg); // TODO: remove
+        if let Some(window) = app_handle.get_webview_window("main") {
+          window
+            .emit("message-received", msg.clone())
+            .unwrap_or_else(|e| eprintln!("emit error: {}", e));
+        }
+        warp::reply::with_status("ok", StatusCode::OK)
+      });
+
+    // TODO: config
+    warp::serve(route).run(([127, 0, 0, 1], 3299)).await;
+  });
 }
