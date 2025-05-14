@@ -86,7 +86,7 @@ export class Viewer {
       alpha: true,
       antialias: true,
     });
-    this._renderer.outputEncoding = THREE.sRGBEncoding;
+    this._renderer.outputColorSpace = THREE.SRGBColorSpace;
     this._renderer.setSize(width, height);
     this._renderer.setPixelRatio(window.devicePixelRatio);
 
