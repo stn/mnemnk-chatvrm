@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-  mnemnk_chatvrm_lib::run();
+    mnemnk_chatvrm_lib::run();
 }
