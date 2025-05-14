@@ -1,6 +1,5 @@
 import { IconButton } from "./iconButton";
 import { Message } from "@/features/messages/messages";
-import { KoeiroParam } from "@/features/constants/koeiroParam";
 import { ChatLog } from "./chatLog";
 import React, { useCallback, useContext, useRef, useState } from "react";
 import { Settings } from "./settings";
@@ -8,65 +7,38 @@ import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import { AssistantText } from "./assistantText";
 
 type Props = {
-  // openAiKey: string;
-  systemPrompt: string;
   chatLog: Message[];
   chatvrmPort: number;
-  // koeiroParam: KoeiroParam;
   mnemnkApiKey: string;
+  mnemnkBoard: string;
   mnemnkHost: string;
   assistantMessage: string;
-  // koeiromapKey: string;
-  onChangeSystemPrompt: (systemPrompt: string) => void;
-  // onChangeAiKey: (key: string) => void;
   onChangeChatLog: (index: number, text: string) => void;
   onChangeChatvrmPort: (port: number) => void;
-  // onChangeKoeiromapParam: (param: KoeiroParam) => void;
   onChangeMnemnkApiKey: (key: string) => void;
+  onChangeMnemnkBoard: (board: string) => void;
   onChangeMnemnkHost: (host: string) => void;
   handleClickResetChatLog: () => void;
-  handleClickResetSystemPrompt: () => void;
-  // onChangeKoeiromapKey: (key: string) => void;
 };
 export const Menu = ({
-  // openAiKey,
-  systemPrompt,
   chatLog,
   chatvrmPort,
-  // koeiroParam,
   mnemnkApiKey,
+  mnemnkBoard,
   mnemnkHost,
   assistantMessage,
-  // koeiromapKey,
-  onChangeSystemPrompt,
-  // onChangeAiKey,
   onChangeChatLog,
   onChangeChatvrmPort,
-  // onChangeKoeiromapParam,
   onChangeMnemnkApiKey,
+  onChangeMnemnkBoard,
   onChangeMnemnkHost,
   handleClickResetChatLog,
-  handleClickResetSystemPrompt,
-  // onChangeKoeiromapKey,
 }: Props) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showChatLog, setShowChatLog] = useState(true);
   const { viewer } = useContext(ViewerContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleChangeSystemPrompt = useCallback(
-    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      onChangeSystemPrompt(event.target.value);
-    },
-    [onChangeSystemPrompt]
-  );
-
-  // const handleAiKeyChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     onChangeAiKey(event.target.value);
-  //   },
-  //   [onChangeAiKey]
-  // );
   const handleChangeChatvrmPort = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChangeChatvrmPort(Number(event.target.value));
@@ -81,29 +53,19 @@ export const Menu = ({
     [onChangeMnemnkApiKey]
   );
 
+  const handleMnemnkBoardChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeMnemnkBoard(event.target.value);
+    },
+    [onChangeMnemnkBoard]
+  );
+
   const handleMnemnkHostChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChangeMnemnkHost(event.target.value);
     },
     [onChangeMnemnkHost]
   );
-
-  // const handleChangeKoeiromapKey = useCallback(
-  //   (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     onChangeKoeiromapKey(event.target.value);
-  //   },
-  //   [onChangeKoeiromapKey]
-  // );
-
-  // const handleChangeKoeiroParam = useCallback(
-  //   (x: number, y: number) => {
-  //     onChangeKoeiromapParam({
-  //       speakerX: x,
-  //       speakerY: y,
-  //     });
-  //   },
-  //   [onChangeKoeiromapParam]
-  // );
 
   const handleClickOpenVrmFile = useCallback(() => {
     fileInputRef.current?.click();
@@ -161,24 +123,19 @@ export const Menu = ({
       {showChatLog && <ChatLog messages={chatLog} />}
       {showSettings && (
         <Settings
-          // openAiKey={openAiKey}
-          mnemnkApiKey={mnemnkApiKey}
-          mnemnkHost={mnemnkHost}
           chatLog={chatLog}
-          systemPrompt={systemPrompt}
-          // koeiroParam={koeiroParam}
-          // koeiromapKey={koeiromapKey}
+          chatvrmPort={chatvrmPort}
+          mnemnkApiKey={mnemnkApiKey}
+          mnemnkBoard={mnemnkBoard}
+          mnemnkHost={mnemnkHost}
           onClickClose={() => setShowSettings(false)}
-          // onChangeAiKey={handleAiKeyChange}
-          onChangeMnemnkApiKey={handleMnemnkApiKeyChange}
-          onChangeMnemnkHost={handleMnemnkHostChange}
-          onChangeSystemPrompt={handleChangeSystemPrompt}
           onChangeChatLog={onChangeChatLog}
-          // onChangeKoeiroParam={handleChangeKoeiroParam}
+          onChangeChatvrmPort={handleChangeChatvrmPort}
+          onChangeMnemnkApiKey={handleMnemnkApiKeyChange}
+          onChangeMnemnkBoard={handleMnemnkBoardChange}
+          onChangeMnemnkHost={handleMnemnkHostChange}
           onClickOpenVrmFile={handleClickOpenVrmFile}
           onClickResetChatLog={handleClickResetChatLog}
-          onClickResetSystemPrompt={handleClickResetSystemPrompt}
-          // onChangeKoeiromapKey={handleChangeKoeiromapKey}
         />
       )}
       {!showChatLog && assistantMessage && (

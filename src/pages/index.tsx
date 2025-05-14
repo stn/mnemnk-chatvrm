@@ -1,8 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import { useCallback, useContext, useEffect, useState } from "react";
+import {
+  useCallback,
+  //useContext,
+  useEffect,
+  useState
+} from "react";
 import VrmViewer from "@/components/vrmViewer";
-import { ViewerContext } from "@/features/vrmViewer/viewerContext";
+// import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import {
   Message,
   // textsToScreenplay,
@@ -10,10 +15,7 @@ import {
 } from "@/features/messages/messages";
 // import { speakCharacter } from "@/features/messages/speakCharacter";
 import { MessageInputContainer } from "@/components/messageInputContainer";
-import { SYSTEM_PROMPT } from "@/features/constants/systemPromptConstants";
 import { DEFAULT_MNEMNK_HOST, DEFAULT_MNEMNK_BOARD, DEFAULT_CHATVRM_PORT } from '@/features/constants/mnemnk';
-// import { KoeiroParam, DEFAULT_PARAM } from "@/features/constants/koeiroParam";
-// import { getChatResponseStream } from "@/features/chat/openAiChat";
 import { Introduction } from "@/components/introduction";
 import { Menu } from "@/components/menu";
 // import { GitHubLink } from "@/components/githubLink";
@@ -24,13 +26,8 @@ interface EmitMessage {
 }
 
 export default function Home() {
-  const { viewer } = useContext(ViewerContext);
-
+  // const { viewer } = useContext(ViewerContext);
   const [initialized, setInitialized] = useState(false);
-  const [systemPrompt, setSystemPrompt] = useState(SYSTEM_PROMPT);
-  // const [openAiKey, setOpenAiKey] = useState("");
-  // const [koeiromapKey, setKoeiromapKey] = useState("");
-  // const [koeiroParam, setKoeiroParam] = useState<KoeiroParam>(DEFAULT_PARAM);
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
@@ -40,29 +37,40 @@ export default function Home() {
   const [mnemnkBoard, setMnemnkBoard] = useState(DEFAULT_MNEMNK_BOARD);
 
   useEffect(() => {
-    if (window.localStorage.getItem("chatVRMParams")) {
-      const params = JSON.parse(
-        window.localStorage.getItem("chatVRMParams") as string
-      );
-      setInitialized(params.initialized ?? false);
-      setSystemPrompt(params.systemPrompt ?? SYSTEM_PROMPT);
-      // setKoeiroParam(params.koeiroParam ?? DEFAULT_PARAM);
-      setChatLog(params.chatLog ?? []);
-      setChatvrmPort(params.chatvrmPort ?? DEFAULT_CHATVRM_PORT);
-      setMnemnkApiKey(params.mnemnkApiKey ?? "");
-      setMnemnkHost(params.mnemnkHost ?? DEFAULT_MNEMNK_HOST);
-      setMnemnkBoard(params.mnemnkBoard ?? DEFAULT_MNEMNK_BOARD);
-    }
+      if (window.localStorage.getItem("chatVRMParams")) {
+        const params = JSON.parse(
+          window.localStorage.getItem("chatVRMParams") as string
+        );
+        setInitialized(params.initialized ?? false);
+        setChatvrmPort(params.chatvrmPort ?? DEFAULT_CHATVRM_PORT);
+        setMnemnkApiKey(params.mnemnkApiKey ?? "");
+        setMnemnkBoard(params.mnemnkBoard ?? DEFAULT_MNEMNK_BOARD);
+        setMnemnkHost(params.mnemnkHost ?? DEFAULT_MNEMNK_HOST);
+      }
+
+      const l = window.localStorage.getItem("chatLog");
+      if (l) {
+        setChatLog(JSON.parse(l));
+      }
   }, []);
 
   useEffect(() => {
-    process.nextTick(() =>
+    process.nextTick(() => {
       window.localStorage.setItem(
         "chatVRMParams",
-        JSON.stringify({ initialized, systemPrompt, chatLog, chatvrmPort, mnemnkApiKey, mnemnkHost})
+        JSON.stringify({ initialized, chatvrmPort, mnemnkApiKey, mnemnkBoard, mnemnkHost})
       )
-    );
-  }, [initialized, systemPrompt, chatLog, chatvrmPort, mnemnkApiKey, mnemnkHost]);
+    });
+  }, [initialized, chatvrmPort, mnemnkApiKey, mnemnkBoard, mnemnkHost]);
+
+  useEffect(() => {
+    process.nextTick(() => {
+      window.localStorage.setItem(
+        "chatLog",
+        JSON.stringify(chatLog)
+      )
+    });
+  }, [chatLog]);
 
   let didInit = false;
 
@@ -92,6 +100,14 @@ export default function Home() {
     [chatLog]
   );
 
+  useEffect(() => {
+    if (initialized) {
+      (async () => {
+        await invoke("spawn_server", { port: chatvrmPort });
+      })();
+    }
+  }, [initialized]);
+
   // /**
   //  * 文ごとに音声を直列でリクエストしながら再生する
   //  */
@@ -111,22 +127,12 @@ export default function Home() {
    */
   const handleSendChat = useCallback(
     async (text: string) => {
-      // if (!openAiKey) {
-      //   setAssistantMessage("APIキーが入力されていません");
-      //   return;
-      // }
-
       const newMessage = text;
 
       if (newMessage == null) return;
 
       setChatProcessing(true);
-      // ユーザーの発言を追加して表示
-      const messageLog: Message[] = [
-        ...chatLog,
-        { role: "user", content: newMessage },
-      ];
-      setChatLog(messageLog);
+      setChatLog(prev => [...prev, { role: "user", content: newMessage }]);
 
       try {
         await invoke("send_message", { host: mnemnkHost, apiKey: mnemnkApiKey, board: mnemnkBoard, message: newMessage });
@@ -220,8 +226,7 @@ export default function Home() {
 
       // setChatLog(messageLogAssistant);
       setChatProcessing(false);
-    },
-    [systemPrompt, chatLog]
+    }, [mnemnkApiKey, mnemnkHost, mnemnkBoard]
   );
 
   return (
@@ -229,15 +234,15 @@ export default function Home() {
       <Meta />
       <Introduction
         initialized={initialized}
+        chatvrmPort={chatvrmPort}
         mnemnkApiKey={mnemnkApiKey}
         mnemnkHost={mnemnkHost}
+        mnemnkBoard={mnemnkBoard}
         setInitialized={setInitialized}
+        onChangeChatvrmPort={setChatvrmPort}
         onChangeMnemnkApiKey={setMnemnkApiKey}
         onChangeMnemnkHost={setMnemnkHost}
-        // openAiKey={openAiKey}
-        // koeiroMapKey={koeiromapKey}
-        // onChangeAiKey={setOpenAiKey}
-        // onChangeKoeiromapKey={setKoeiromapKey}
+        onChangeMnemnkBoard={setMnemnkBoard}
       />
       <VrmViewer />
       <MessageInputContainer
@@ -245,25 +250,18 @@ export default function Home() {
         onChatProcessStart={handleSendChat}
       />
       <Menu
-        // openAiKey={openAiKey}
-        systemPrompt={systemPrompt}
         chatLog={chatLog}
         chatvrmPort={chatvrmPort}
-        // koeiroParam={koeiroParam}
         mnemnkApiKey={mnemnkApiKey}
+        mnemnkBoard={mnemnkBoard}
         mnemnkHost={mnemnkHost}
         assistantMessage={assistantMessage}
-        // koeiromapKey={koeiromapKey}
-        // onChangeAiKey={setOpenAiKey}
-        onChangeSystemPrompt={setSystemPrompt}
         onChangeChatLog={handleChangeChatLog}
         onChangeChatvrmPort={setChatvrmPort}
         onChangeMnemnkApiKey={setMnemnkApiKey}
+        onChangeMnemnkBoard={setMnemnkBoard}
         onChangeMnemnkHost={setMnemnkHost}
-        // onChangeKoeiromapParam={setKoeiroParam}
         handleClickResetChatLog={() => setChatLog([])}
-        handleClickResetSystemPrompt={() => setSystemPrompt(SYSTEM_PROMPT)}
-        // onChangeKoeiromapKey={setKoeiromapKey}
       />
       {/* <GitHubLink /> */}
     </div>

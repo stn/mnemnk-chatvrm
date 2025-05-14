@@ -12,12 +12,12 @@ pub fn run() {
                         .build(),
                 )?;
             }
-
-            rest::spawn_server(app.handle().clone());
-
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![rest::send_message])
+        .invoke_handler(tauri::generate_handler![
+            rest::send_message,
+            rest::spawn_server,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

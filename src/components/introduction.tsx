@@ -2,35 +2,49 @@ import { useState, useCallback } from "react";
 import { Link } from "./link";
 
 type Props = {
-  // openAiKey: string;
-  // koeiroMapKey: string;
-  // onChangeAiKey: (openAiKey: string) => void;
-  // onChangeKoeiromapKey: (koeiromapKey: string) => void;
   initialized: boolean;
-  setInitialized: (initialized: boolean) => void;
+  chatvrmPort: number;
   mnemnkApiKey: string;
+  mnemnkBoard: string;
   mnemnkHost: string;
+  setInitialized: (initialized: boolean) => void;
+  onChangeChatvrmPort: (chatvrmPort: number) => void;
   onChangeMnemnkApiKey: (mnemnkApiKey: string) => void;
+  onChangeMnemnkBoard: (mnemnkBoard: string) => void;
   onChangeMnemnkHost: (mnemnkHost: string) => void;
 };
 
 export const Introduction = ({
-  // openAiKey,
-  // koeiroMapKey,
-  // onChangeAiKey,
-  // onChangeKoeiromapKey,
   initialized,
-  setInitialized,
+  chatvrmPort,
   mnemnkApiKey,
+  mnemnkBoard,
   mnemnkHost,
+  setInitialized,
+  onChangeChatvrmPort,
   onChangeMnemnkApiKey,
+  onChangeMnemnkBoard,
   onChangeMnemnkHost,
 }: Props) => {
+  const handleChatvrmPortChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeChatvrmPort(Number(event.target.value));
+    },
+    [onChangeChatvrmPort]
+  );
+
   const handleMnemnkApiKeyChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChangeMnemnkApiKey(event.target.value);
     },
     [onChangeMnemnkApiKey]
+  );
+
+  const handleMnemnkBoardChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeMnemnkBoard(event.target.value);
+    },
+    [onChangeMnemnkBoard]
   );
 
   const handleMnemnkHostChange = useCallback(
@@ -39,20 +53,6 @@ export const Introduction = ({
     },
     [onChangeMnemnkHost]
   );
-
-  // const handleAiKeyChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     onChangeAiKey(event.target.value);
-  //   },
-  //   [onChangeAiKey]
-  // );
-
-  // const handleKoeiromapKeyChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     onChangeKoeiromapKey(event.target.value);
-  //   },
-  //   [onChangeKoeiromapKey]
-  // );
 
   return !initialized ? (
     <div className="absolute z-40 w-full h-full px-24 py-40  bg-black/30 font-M_PLUS_2">
@@ -77,6 +77,18 @@ export const Introduction = ({
 
         <div className="my-24">
           <div className="my-8 font-bold typography-20 text-secondary">
+            Mnemnk Host
+          </div>
+          <input
+            type="text"
+            placeholder="http://localhost:3296"
+            value={mnemnkHost}
+            onChange={handleMnemnkHostChange}
+            className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+          ></input>
+        </div>
+        <div className="my-24">
+          <div className="my-8 font-bold typography-20 text-secondary">
             Mnemnk APIキー
           </div>
           <input
@@ -89,15 +101,30 @@ export const Introduction = ({
         </div>
         <div className="my-24">
           <div className="my-8 font-bold typography-20 text-secondary">
-            Mnemnk Host
+            Mnemnk Board
           </div>
           <input
             type="text"
-            placeholder="http://localhost:3296"
-            value={mnemnkHost}
-            onChange={handleMnemnkHostChange}
+            placeholder="chatvrm"
+            value={mnemnkBoard}
+            onChange={handleMnemnkBoardChange}
             className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
           ></input>
+        </div>
+        <div className="my-24">
+          <div className="my-8 font-bold typography-20 text-secondary">
+            ChatVRM Port
+          </div>
+          <input
+            type="text"
+            placeholder="3299"
+            value={chatvrmPort}
+            onChange={handleChatvrmPortChange}
+            className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+          ></input>
+          <div>
+            ChatVRM Portを変更した場合は再起動してください。
+          </div>
         </div>
         <div className="my-24">
           <button
