@@ -31,23 +31,23 @@ export class LipSync {
     };
   }
 
-  public async playFromArrayBuffer(buffer: ArrayBuffer, onEnded?: () => void) {
-    const audioBuffer = await this.audio.decodeAudioData(buffer);
+//   public async playFromArrayBuffer(buffer: ArrayBuffer, onEnded?: () => void) {
+//     const audioBuffer = await this.audio.decodeAudioData(buffer);
 
-    const bufferSource = this.audio.createBufferSource();
-    bufferSource.buffer = audioBuffer;
+//     const bufferSource = this.audio.createBufferSource();
+//     bufferSource.buffer = audioBuffer;
 
-    bufferSource.connect(this.audio.destination);
-    bufferSource.connect(this.analyser);
-    bufferSource.start();
-    if (onEnded) {
-      bufferSource.addEventListener("ended", onEnded);
-    }
-  }
+//     bufferSource.connect(this.audio.destination);
+//     bufferSource.connect(this.analyser);
+//     bufferSource.start();
+//     if (onEnded) {
+//       bufferSource.addEventListener("ended", onEnded);
+//     }
+//   }
 
-  public async playFromURL(url: string, onEnded?: () => void) {
-    const res = await fetch(url);
-    const buffer = await res.arrayBuffer();
-    this.playFromArrayBuffer(buffer, onEnded);
-  }
+//   public async playFromURL(url: string, onEnded?: () => void) {
+//     const res = await fetch(url);
+//     const buffer = await res.arrayBuffer();
+//     this.playFromArrayBuffer(buffer, onEnded);
+//   }
 }
