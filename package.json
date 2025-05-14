@@ -16,7 +16,8 @@
     "@tauri-apps/plugin-store": "^2.2.0",
     "next": "15.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@charcoal-ui/tailwind-config": "^2.6.0",

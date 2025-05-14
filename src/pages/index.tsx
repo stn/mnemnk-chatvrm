@@ -81,6 +81,13 @@ export default function Home() {
       listen<EmitMessage>('message-received', async (event) => {
         let receivedMessage = event.payload.text;
 
+        if (!receivedMessage.startsWith("[")) {
+          setAssistantMessage(receivedMessage);
+          setChatLog(prev => [...prev, { role: "assistant", content: receivedMessage }]);
+          setChatProcessing(false);
+          return;
+        }
+
         let aiTextLog = "";
         const sentences = new Array<string>();
         try {
