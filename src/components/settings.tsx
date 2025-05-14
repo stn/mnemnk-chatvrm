@@ -2,46 +2,58 @@ import React from "react";
 import { IconButton } from "./iconButton";
 import { TextButton } from "./textButton";
 import { Message } from "@/features/messages/messages";
-import {
-  KoeiroParam,
-  PRESET_A,
-  PRESET_B,
-  PRESET_C,
-  PRESET_D,
-} from "@/features/constants/koeiroParam";
+// import {
+//   KoeiroParam,
+//   PRESET_A,
+//   PRESET_B,
+//   PRESET_C,
+//   PRESET_D,
+// } from "@/features/constants/koeiroParam";
 import { Link } from "./link";
+import { on } from "events";
 
 type Props = {
-  openAiKey: string;
+  // openAiKey: string;
   systemPrompt: string;
   chatLog: Message[];
-  koeiroParam: KoeiroParam;
-  koeiromapKey: string;
+  chatvrmPort: number;
+  mnemnkHost: string;
+  mnemnkApiKey: string;
+  // koeiroParam: KoeiroParam;
+  // koeiromapKey: string;
   onClickClose: () => void;
-  onChangeAiKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onChangeAiKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeSystemPrompt: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeChatLog: (index: number, text: string) => void;
-  onChangeKoeiroParam: (x: number, y: number) => void;
+  onChangeChatvrmPort: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onChangeKoeiroParam: (x: number, y: number) => void;
+  onChangeMnemnkHost: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeMnemnkApiKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClickOpenVrmFile: () => void;
   onClickResetChatLog: () => void;
   onClickResetSystemPrompt: () => void;
-  onChangeKoeiromapKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onChangeKoeiromapKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 export const Settings = ({
-  openAiKey,
+  // openAiKey,
+  mnemnkHost,
+  mnemnkApiKey,
   chatLog,
   systemPrompt,
-  koeiroParam,
-  koeiromapKey,
+  // koeiroParam,
+  // koeiromapKey,
   onClickClose,
   onChangeSystemPrompt,
-  onChangeAiKey,
+  // onChangeAiKey,
   onChangeChatLog,
-  onChangeKoeiroParam,
+  onChangeChatvrmPort,
+  // onChangeKoeiroParam,
+  onChangeMnemnkHost,
+  onChangeMnemnkApiKey,
   onClickOpenVrmFile,
   onClickResetChatLog,
   onClickResetSystemPrompt,
-  onChangeKoeiromapKey,
+  // onChangeKoeiromapKey,
 }: Props) => {
   return (
     <div className="absolute z-40 w-full h-full bg-white/80 backdrop-blur ">
@@ -56,6 +68,42 @@ export const Settings = ({
         <div className="text-text1 max-w-3xl mx-auto px-24 py-64 ">
           <div className="my-24 typography-32 font-bold">設定</div>
           <div className="my-24">
+            <div className="my-8 font-bold typography-20 text-secondary">
+              Mnemnk APIキー
+            </div>
+            <input
+              type="text"
+              placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+              value={mnemnkApiKey}
+              onChange={onChangeMnemnkApiKey}
+              className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+            ></input>
+          </div>
+          <div className="my-24">
+            <div className="my-8 font-bold typography-20 text-secondary">
+              Mnemnk Host
+            </div>
+            <input
+              type="text"
+              placeholder="localhost:3296"
+              value={mnemnkHost}
+              onChange={onChangeMnemnkHost}
+              className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+            ></input>
+          </div>
+          <div className="my-24">
+            <div className="my-8 font-bold typography-20 text-secondary">
+              ChatVRM Port
+            </div>
+            <input
+              type="text"
+              placeholder="3299"
+              value={mnemnkHost}
+              onChange={onChangeChatvrmPort}
+              className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+            ></input>
+          </div>
+          {/* <div className="my-24">
             <div className="my-16 typography-20 font-bold">OpenAI API キー</div>
             <input
               className="text-ellipsis px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
@@ -78,7 +126,7 @@ export const Settings = ({
               <br />
               ※利用しているモデルはChatGPT API (GPT-3.5)です。
             </div>
-          </div>
+          </div> */}
           <div className="my-40">
             <div className="my-16 typography-20 font-bold">
               キャラクターモデル
@@ -103,7 +151,7 @@ export const Settings = ({
               className="px-16 py-8  bg-surface1 hover:bg-surface1-hover h-168 rounded-8 w-full"
             ></textarea>
           </div>
-          <div className="my-40">
+          {/* <div className="my-40">
             <div className="my-16 typography-20 font-bold">声の調整</div>
             <div>
               KoemotionのKoeiromap APIを使用しています。詳しくは
@@ -187,7 +235,7 @@ export const Settings = ({
                 }}
               ></input>
             </div>
-          </div>
+          </div> */}
           {chatLog.length > 0 && (
             <div className="my-40">
               <div className="my-8 grid-cols-2">

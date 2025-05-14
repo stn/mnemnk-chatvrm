@@ -12,8 +12,8 @@ struct ApiOutRequest {
 }
 
 #[tauri::command]
-pub async fn send_message(message: String) -> Result<(), String> {
-  println!("Received message: {}", message);
+pub async fn send_message(host: String, api_key: String, board: String, message: String) -> Result<(), String> {
+  println!("send_message: {}", message);
 
   let Ok(value): Result<Value, _> = serde_json::to_value(&message) else {
     eprintln!("Failed to parse message: {}", message);
@@ -21,15 +21,16 @@ pub async fn send_message(message: String) -> Result<(), String> {
   };
 
   let api_out_request = ApiOutRequest {
-      ch: "chat".to_string(),
+      ch: board.to_string(),
       kind: "text".to_string(),
       value,
   };
+  dbg!(&api_out_request);
 
   let client = reqwest::Client::new();
-  match client.post("http://localhost:3298/out")
+  match client.post(format!("http://{}/out", host))
       .header("Content-Type", "application/json")
-      .bearer_auth("")
+      .bearer_auth(api_key)
       .json(&api_out_request)
       .send()
       .await {

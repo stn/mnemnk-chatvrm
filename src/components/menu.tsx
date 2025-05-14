@@ -8,34 +8,46 @@ import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import { AssistantText } from "./assistantText";
 
 type Props = {
-  openAiKey: string;
+  // openAiKey: string;
   systemPrompt: string;
   chatLog: Message[];
-  koeiroParam: KoeiroParam;
+  chatvrmPort: number;
+  // koeiroParam: KoeiroParam;
+  mnemnkApiKey: string;
+  mnemnkHost: string;
   assistantMessage: string;
-  koeiromapKey: string;
+  // koeiromapKey: string;
   onChangeSystemPrompt: (systemPrompt: string) => void;
-  onChangeAiKey: (key: string) => void;
+  // onChangeAiKey: (key: string) => void;
   onChangeChatLog: (index: number, text: string) => void;
-  onChangeKoeiromapParam: (param: KoeiroParam) => void;
+  onChangeChatvrmPort: (port: number) => void;
+  // onChangeKoeiromapParam: (param: KoeiroParam) => void;
+  onChangeMnemnkApiKey: (key: string) => void;
+  onChangeMnemnkHost: (host: string) => void;
   handleClickResetChatLog: () => void;
   handleClickResetSystemPrompt: () => void;
-  onChangeKoeiromapKey: (key: string) => void;
+  // onChangeKoeiromapKey: (key: string) => void;
 };
 export const Menu = ({
-  openAiKey,
+  // openAiKey,
   systemPrompt,
   chatLog,
-  koeiroParam,
+  chatvrmPort,
+  // koeiroParam,
+  mnemnkApiKey,
+  mnemnkHost,
   assistantMessage,
-  koeiromapKey,
+  // koeiromapKey,
   onChangeSystemPrompt,
-  onChangeAiKey,
+  // onChangeAiKey,
   onChangeChatLog,
-  onChangeKoeiromapParam,
+  onChangeChatvrmPort,
+  // onChangeKoeiromapParam,
+  onChangeMnemnkApiKey,
+  onChangeMnemnkHost,
   handleClickResetChatLog,
   handleClickResetSystemPrompt,
-  onChangeKoeiromapKey,
+  // onChangeKoeiromapKey,
 }: Props) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showChatLog, setShowChatLog] = useState(true);
@@ -49,29 +61,49 @@ export const Menu = ({
     [onChangeSystemPrompt]
   );
 
-  const handleAiKeyChange = useCallback(
+  // const handleAiKeyChange = useCallback(
+  //   (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     onChangeAiKey(event.target.value);
+  //   },
+  //   [onChangeAiKey]
+  // );
+  const handleChangeChatvrmPort = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeAiKey(event.target.value);
+      onChangeChatvrmPort(Number(event.target.value));
     },
-    [onChangeAiKey]
+    [onChangeChatvrmPort]
   );
 
-  const handleChangeKoeiromapKey = useCallback(
+  const handleMnemnkApiKeyChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeKoeiromapKey(event.target.value);
+      onChangeMnemnkApiKey(event.target.value);
     },
-    [onChangeKoeiromapKey]
+    [onChangeMnemnkApiKey]
   );
 
-  const handleChangeKoeiroParam = useCallback(
-    (x: number, y: number) => {
-      onChangeKoeiromapParam({
-        speakerX: x,
-        speakerY: y,
-      });
+  const handleMnemnkHostChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeMnemnkHost(event.target.value);
     },
-    [onChangeKoeiromapParam]
+    [onChangeMnemnkHost]
   );
+
+  // const handleChangeKoeiromapKey = useCallback(
+  //   (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     onChangeKoeiromapKey(event.target.value);
+  //   },
+  //   [onChangeKoeiromapKey]
+  // );
+
+  // const handleChangeKoeiroParam = useCallback(
+  //   (x: number, y: number) => {
+  //     onChangeKoeiromapParam({
+  //       speakerX: x,
+  //       speakerY: y,
+  //     });
+  //   },
+  //   [onChangeKoeiromapParam]
+  // );
 
   const handleClickOpenVrmFile = useCallback(() => {
     fileInputRef.current?.click();
@@ -129,20 +161,24 @@ export const Menu = ({
       {showChatLog && <ChatLog messages={chatLog} />}
       {showSettings && (
         <Settings
-          openAiKey={openAiKey}
+          // openAiKey={openAiKey}
+          mnemnkApiKey={mnemnkApiKey}
+          mnemnkHost={mnemnkHost}
           chatLog={chatLog}
           systemPrompt={systemPrompt}
-          koeiroParam={koeiroParam}
-          koeiromapKey={koeiromapKey}
+          // koeiroParam={koeiroParam}
+          // koeiromapKey={koeiromapKey}
           onClickClose={() => setShowSettings(false)}
-          onChangeAiKey={handleAiKeyChange}
+          // onChangeAiKey={handleAiKeyChange}
+          onChangeMnemnkApiKey={handleMnemnkApiKeyChange}
+          onChangeMnemnkHost={handleMnemnkHostChange}
           onChangeSystemPrompt={handleChangeSystemPrompt}
           onChangeChatLog={onChangeChatLog}
-          onChangeKoeiroParam={handleChangeKoeiroParam}
+          // onChangeKoeiroParam={handleChangeKoeiroParam}
           onClickOpenVrmFile={handleClickOpenVrmFile}
           onClickResetChatLog={handleClickResetChatLog}
           onClickResetSystemPrompt={handleClickResetSystemPrompt}
-          onChangeKoeiromapKey={handleChangeKoeiromapKey}
+          // onChangeKoeiromapKey={handleChangeKoeiromapKey}
         />
       )}
       {!showChatLog && assistantMessage && (
