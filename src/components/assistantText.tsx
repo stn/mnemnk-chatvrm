@@ -11,7 +11,6 @@ export const AssistantText = ({ message }: { message: string }) => {
           <div className="px-24 py-16">
             <div className="text-secondary typography-16 font-bold">
               <ReactMarkdown>{message}</ReactMarkdown>
-              {/* {message.replace(/\[([a-zA-Z]*?)\]/g, "")} */}
             </div>
           </div>
         </div>
