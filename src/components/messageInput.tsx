@@ -23,7 +23,7 @@ export const MessageInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && event.ctrlKey) {
       event.preventDefault();
       onClickSendButton(event as unknown as React.MouseEvent<HTMLButtonElement>);
 
