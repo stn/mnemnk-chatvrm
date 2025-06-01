@@ -28,7 +28,7 @@ ChatVRMの各機能は主に以下の技術を使用しています。
 ## 実行
 
 ```bash
-git clone https://github.com/stn/ChatVRM.git
+git clone https://github.com/stn/mnemnk-chatvrm.git
 ```
 
 必要なパッケージをインストールしてください。
